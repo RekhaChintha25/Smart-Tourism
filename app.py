@@ -1,3 +1,4 @@
+import os
 
 from flask import (
     Flask,
@@ -9,7 +10,8 @@ from flask import (
     flash
 )
 
-import mysql.connector
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
 from werkzeug.security import (
     generate_password_hash,
@@ -27,18 +29,12 @@ app.secret_key = "smart_tourism_secret_key"
 # ==========================================
 
 def get_db_connection():
+    database_url = os.environ.get("DATABASE_URL")
 
-    connection = mysql.connector.connect(
+    if not database_url:
+        raise Exception("DATABASE_URL is not configured")
 
-        host="localhost",
-
-        user="root",
-
-        password="rekha@2005",
-
-        database="smart_tourism_db"
-
-    )
+    connection = psycopg2.connect(database_url)
 
     return connection
 
@@ -313,7 +309,7 @@ def register():
 
             return redirect(url_for("login"))
 
-        except mysql.connector.Error as error:
+        except psycopg2.Error as error:
 
             print("Database Error:", error)
 
@@ -361,7 +357,7 @@ def login():
 
             connection = get_db_connection()
 
-            cursor = connection.cursor(dictionary=True)
+            cursor = connection.cursor(cursor_factory=RealDictCursor)
 
             cursor.execute(
 
@@ -398,7 +394,7 @@ def login():
 
                 return redirect(url_for("login"))
 
-        except mysql.connector.Error as error:
+        except psycopg2.Error as error:
 
             print("Database Error:", error)
 
@@ -511,7 +507,7 @@ def add_favorite(place_id):
 
         return redirect(url_for("places"))
 
-    except mysql.connector.Error as error:
+    except psycopg2.Error as error:
 
         print("Database Error:", error)
 
@@ -587,7 +583,7 @@ def favorites():
             favorite_places=favorite_places
         )
 
-    except mysql.connector.Error as error:
+    except psycopg2.Error as error:
 
         print("Database Error:", error)
 
@@ -656,7 +652,7 @@ def remove_favorite(place_id):
 
         return redirect(url_for("favorites"))
 
-    except mysql.connector.Error as error:
+    except psycopg2.Error as error:
 
         print("Database Error:", error)
 
