@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Tourist Places | Smart Tourism</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+
+    <style>
+      /* ==========================================
+           SEARCH AND FILTER SECTION
+        ========================================== */
+
+      .search-filter-container {
+        display: flex;
+
+        justify-content: center;
+
+        align-items: center;
+
+        gap: 15px;
+
+        flex-wrap: wrap;
+
+        margin: 25px auto;
+      }
+
+      /* SEARCH INPUT */
+
+      .search-box input {
+        width: 350px;
+
+        max-width: 100%;
+
+        padding: 14px 20px;
+
+        border: 2px solid #147d50;
+
+        border-radius: 30px;
+
+        font-size: 16px;
+
+        outline: none;
+      }
+
+      .search-box input:focus {
+        border-color: #103b2e;
+      }
+
+      /* CATEGORY FILTER */
+
+      .category-filter select {
+        padding: 14px 20px;
+
+        border: 2px solid #147d50;
+
+        border-radius: 30px;
+
+        font-size: 16px;
+
+        background-color: white;
+
+        cursor: pointer;
+
+        outline: none;
+      }
+
+      /* ==========================================
+           TOURIST PLACE IMAGE
+        ========================================== */
+
+      .place-image {
+        width: 100%;
+
+        height: 220px;
+
+        object-fit: cover;
+
+        display: block;
+
+        border-radius: 10px;
+
+        margin-bottom: 15px;
+      }
+
+      /* ==========================================
+           VIEW DETAILS BUTTON
+        ========================================== */
+
+      .details-button {
+        display: inline-block;
+
+        margin-top: 15px;
+
+        padding: 12px 22px;
+
+        background-color: #147d50;
+
+        color: white;
+
+        text-decoration: none;
+
+        border-radius: 25px;
+
+        font-size: 15px;
+
+        font-weight: bold;
+
+        transition: 0.3s;
+      }
+
+      .details-button:hover {
+        background-color: #103b2e;
+
+        transform: translateY(-2px);
+      }
+
+      /* ==========================================
+           FAVORITE BUTTON
+        ========================================== */
+
+      .favorite-form {
+        margin-top: 12px;
+      }
+
+      .favorite-button {
+        display: inline-block;
+
+        padding: 12px 22px;
+
+        background-color: #fff0f0;
+
+        color: #d62828;
+
+        border: 2px solid #d62828;
+
+        border-radius: 25px;
+
+        font-size: 15px;
+
+        font-weight: bold;
+
+        cursor: pointer;
+
+        transition: 0.3s;
+      }
+
+      .favorite-button:hover {
+        background-color: #d62828;
+
+        color: white;
+
+        transform: translateY(-2px);
+      }
+
+      /* ==========================================
+           NO RESULTS MESSAGE
+        ========================================== */
+
+      #noResults {
+        display: none;
+
+        color: #103b2e;
+
+        font-size: 20px;
+
+        margin: 30px;
+
+        text-align: center;
+      }
+
+      /* ==========================================
+           BACK HOME BUTTON
+        ========================================== */
+
+      .back-home-button {
+        display: inline-block;
+
+        margin: 30px auto;
+
+        padding: 12px 25px;
+
+        background-color: #103b2e;
+
+        color: white;
+
+        text-decoration: none;
+
+        border-radius: 25px;
+
+        font-weight: bold;
+
+        transition: 0.3s;
+      }
+
+      .back-home-button:hover {
+        background-color: #147d50;
+
+        transform: translateY(-2px);
+      }
+
+      /* ==========================================
+           RESPONSIVE DESIGN
+        ========================================== */
+
+      @media (max-width: 768px) {
+        .search-filter-container {
+          flex-direction: column;
+        }
+
+        .search-box {
+          width: 100%;
+        }
+
+        .search-box input {
+          width: 100%;
+
+          box-sizing: border-box;
+        }
+
+        .category-filter select {
+          width: 100%;
+        }
+
+        .place-image {
+          height: 200px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ==========================================
+         HEADER
+    ========================================== -->
+
+    <header>
+      <h1>Explore Tourist Places</h1>
+
+      <p>Discover Beautiful Places in India</p>
+    </header>
+
+    <!-- ==========================================
+         TOURIST PLACES SECTION
+    ========================================== -->
+
+    <section class="places">
+      <h2>Popular Tourist Destinations</h2>
+
+      <!-- ==========================================
+             SEARCH AND CATEGORY FILTER
+        ========================================== -->
+
+      <div class="search-filter-container">
+        <!-- SEARCH BOX -->
+
+        <div class="search-box">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search tourist places..."
+            oninput="filterPlaces()"
+          />
+        </div>
+
+        <!-- CATEGORY FILTER -->
+
+        <div class="category-filter">
+          <select id="categoryFilter" onchange="filterPlaces()">
+            <option value="all">All Categories</option>
+
+            <option value="nature">Nature</option>
+
+            <option value="historical">Historical</option>
+
+            <option value="spiritual">Spiritual</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ==========================================
+             TOURIST PLACE CARDS
+        ========================================== -->
+
+      <div class="places-container">
+        {% for place in tourist_places %}
+
+        <div class="place-card" data-category="{{ place.category | lower }}">
+          <!-- PLACE IMAGE -->
+
+          <img
+            src="{{ url_for('static', filename='images/' + place.image) }}"
+            alt="{{ place.name }}"
+            class="place-image"
+          />
+
+          <!-- PLACE NAME -->
+
+          <h3>{{ place.name }}</h3>
+
+          <!-- LOCATION -->
+
+          <p>
+            <strong>Location:</strong>
+
+            {{ place.location }}
+          </p>
+
+          <!-- CATEGORY -->
+
+          <p>
+            <strong>Category:</strong>
+
+            {{ place.category }}
+          </p>
+
+          <!-- DESCRIPTION -->
+
+          <p>{{ place.description }}</p>
+
+          <!-- ==========================================
+                     VIEW DETAILS BUTTON
+                ========================================== -->
+
+          <a
+            href="{{ url_for('place_details', place_id=place.id) }}"
+            class="details-button"
+          >
+            View Details
+          </a>
+
+          <!-- ==========================================
+                     FAVORITE BUTTON
+                ========================================== -->
+
+          <form
+            action="{{ url_for('add_favorite', place_id=place.id) }}"
+            method="POST"
+            class="favorite-form"
+          >
+            <button type="submit" class="favorite-button">
+              ❤️ Add to Favorites
+            </button>
+          </form>
+        </div>
+
+        {% endfor %}
+      </div>
+
+      <!-- ==========================================
+             NO RESULTS MESSAGE
+        ========================================== -->
+
+      <p id="noResults">No tourist places found.</p>
+
+      <!-- ==========================================
+             BACK HOME BUTTON
+        ========================================== -->
+
+      <a href="{{ url_for('home') }}" class="back-home-button">
+        Back to Home
+      </a>
+    </section>
+
+    <!-- ==========================================
+         JAVASCRIPT SEARCH AND FILTER
+    ========================================== -->
+
+    <script>
+      function filterPlaces() {
+        // SEARCH INPUT
+
+        const searchInput = document.getElementById("searchInput");
+
+        const searchText = searchInput.value.toLowerCase().trim();
+
+        // CATEGORY FILTER
+
+        const categoryFilter = document.getElementById("categoryFilter");
+
+        const selectedCategory = categoryFilter.value.toLowerCase();
+
+        // TOURIST PLACE CARDS
+
+        const cards = document.querySelectorAll(".place-card");
+
+        // NO RESULTS MESSAGE
+
+        const noResults = document.getElementById("noResults");
+
+        // VISIBLE PLACES COUNTER
+
+        let visibleCount = 0;
+
+        // LOOP THROUGH TOURIST CARDS
+
+        cards.forEach(function (card) {
+          // CARD TEXT
+
+          const cardText = card.textContent.toLowerCase();
+
+          // CARD CATEGORY
+
+          const cardCategory = card.dataset.category;
+
+          // SEARCH MATCH
+
+          const matchesSearch = cardText.includes(searchText);
+
+          // CATEGORY MATCH
+
+          const matchesCategory =
+            selectedCategory === "all" || cardCategory === selectedCategory;
+
+          // SHOW OR HIDE CARDS
+
+          if (matchesSearch && matchesCategory) {
+            card.style.display = "";
+
+            visibleCount++;
+          } else {
+            card.style.display = "none";
+          }
+        });
+
+        // NO RESULTS MESSAGE
+
+        if (visibleCount === 0) {
+          noResults.style.display = "block";
+        } else {
+          noResults.style.display = "none";
+        }
+      }
+    </script>
+  </body>
+</html>

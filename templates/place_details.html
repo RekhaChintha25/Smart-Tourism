@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{{ place.name }} | Smart Tourism</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f0f5f2;
+        color: #333;
+      }
+
+      header {
+        background-color: #103b2e;
+        color: white;
+        text-align: center;
+        padding: 30px 15px;
+      }
+
+      header h1 {
+        margin-bottom: 10px;
+      }
+
+      .details-container {
+        max-width: 1000px;
+        margin: 35px auto;
+        padding: 25px;
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .details-image {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        border-radius: 12px;
+      }
+
+      .place-title {
+        color: #147d50;
+        font-size: 32px;
+        margin-top: 25px;
+      }
+
+      .place-info {
+        line-height: 1.8;
+        font-size: 16px;
+      }
+
+      .details-section {
+        margin-top: 25px;
+        padding: 20px;
+        background-color: #f5f8f6;
+        border-radius: 10px;
+      }
+
+      .details-section h2 {
+        color: #103b2e;
+      }
+
+      .details-section ul {
+        line-height: 2;
+      }
+
+      /* Google Maps Button */
+
+      .maps-button {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 12px 25px;
+        background-color: #147d50;
+        color: white;
+        text-decoration: none;
+        border-radius: 25px;
+        font-weight: bold;
+        transition: 0.3s;
+      }
+
+      .maps-button:hover {
+        background-color: #103b2e;
+        transform: translateY(-2px);
+      }
+
+      /* Back Button */
+
+      .back-button {
+        display: inline-block;
+        margin-top: 25px;
+        margin-right: 10px;
+        padding: 12px 25px;
+        background-color: #147d50;
+        color: white;
+        text-decoration: none;
+        border-radius: 25px;
+        font-weight: bold;
+      }
+
+      .back-button:hover {
+        background-color: #103b2e;
+      }
+
+      @media (max-width: 768px) {
+        .details-container {
+          margin: 15px;
+          padding: 15px;
+        }
+
+        .details-image {
+          height: 250px;
+        }
+
+        .place-title {
+          font-size: 25px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Header -->
+
+    <header>
+      <h1>Smart Tourism</h1>
+
+      <p>Discover Beautiful Places in India</p>
+    </header>
+
+    <!-- Place Details -->
+
+    <div class="details-container">
+      <!-- Image -->
+
+      <img
+        src="{{ url_for('static', filename='images/' + place.image) }}"
+        alt="{{ place.name }}"
+        class="details-image"
+      />
+
+      <!-- Place Name -->
+
+      <h1 class="place-title">{{ place.name }}</h1>
+
+      <!-- Basic Information -->
+
+      <div class="place-info">
+        <p>
+          <strong>Location:</strong>
+          {{ place.location }}
+        </p>
+
+        <p>
+          <strong>Category:</strong>
+          {{ place.category }}
+        </p>
+
+        <p>
+          <strong>Description:</strong>
+          {{ place.description }}
+        </p>
+      </div>
+
+      <!-- About Place -->
+
+      <div class="details-section">
+        <h2>About This Place</h2>
+
+        <p>{{ place.about }}</p>
+      </div>
+
+      <!-- Best Time -->
+
+      <div class="details-section">
+        <h2>Best Time to Visit</h2>
+
+        <p>{{ place.best_time }}</p>
+      </div>
+
+      <!-- Attractions -->
+
+      <div class="details-section">
+        <h2>Popular Attractions</h2>
+
+        <ul>
+          {% for attraction in place.attractions %}
+
+          <li>{{ attraction }}</li>
+
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Travel Information -->
+
+      <div class="details-section">
+        <h2>Travel Information</h2>
+
+        <p>{{ place.travel_info }}</p>
+      </div>
+
+      <!-- Google Maps Button -->
+
+      <a
+        href="https://www.google.com/maps/search/?api=1&query={{ place.name | urlencode }}%20{{ place.location | urlencode }}"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="maps-button"
+      >
+        View Location on Google Maps
+      </a>
+
+      <!-- Back Button -->
+
+      <a href="{{ url_for('places') }}" class="back-button">
+        Back to Tourist Places
+      </a>
+    </div>
+  </body>
+</html>

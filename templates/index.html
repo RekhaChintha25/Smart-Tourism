@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Smart Tourism</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+
+  <body>
+    <!-- HEADER -->
+
+    <header>
+      <h1>Smart Tourism</h1>
+
+      <p>Discover Beautiful Places in India</p>
+
+      <nav>
+        {% if session.get('user_id') %}
+        <span>Welcome, {{ session.get('username') }}!</span>
+        <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('register') }}">Register</a>
+        {% endif %}
+      </nav>
+    </header>
+
+    <!-- HOME PAGE -->
+
+    <section class="hero">
+      <h2>Explore Your Next Adventure</h2>
+
+      <p>Find amazing tourist destinations based on your interests.</p>
+
+      <button onclick="window.location.href = '/places'">Explore Places</button>
+    </section>
+  </body>
+</html>

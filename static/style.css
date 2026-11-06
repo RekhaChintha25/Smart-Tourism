@@ -1,0 +1,709 @@
+/* =========================
+   GENERAL
+========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f5f2;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header {
+  background-color: #103b2e;
+  color: white;
+  text-align: center;
+  padding: 30px 20px;
+}
+
+header h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+header p {
+  font-size: 16px;
+}
+
+/* =========================
+   HOME PAGE HERO
+========================= */
+
+.hero {
+  min-height: 450px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  padding: 50px 20px;
+
+  background:
+    linear-gradient(rgba(16, 59, 46, 0.75), rgba(16, 59, 46, 0.75)),
+    url("/static/images/araku.jpg");
+
+  background-size: cover;
+  background-position: center;
+}
+
+.hero-content {
+  max-width: 800px;
+  color: white;
+}
+
+.hero h2 {
+  font-size: 42px;
+  margin-bottom: 15px;
+}
+
+.hero p {
+  font-size: 18px;
+  margin-bottom: 25px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.btn {
+  display: inline-block;
+
+  background-color: #147d50;
+  color: white;
+
+  padding: 12px 28px;
+
+  text-decoration: none;
+
+  border-radius: 8px;
+
+  font-size: 16px;
+
+  border: none;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background-color: #103b2e;
+
+  transform: translateY(-2px);
+}
+
+/* =========================
+   HOME PAGE SECTION
+========================= */
+
+.home-section {
+  padding: 50px 25px;
+  text-align: center;
+}
+
+.home-section h2 {
+  color: #103b2e;
+  font-size: 28px;
+  margin-bottom: 15px;
+}
+
+.home-section p {
+  font-size: 16px;
+  margin-bottom: 25px;
+}
+
+/* =========================
+   TOURIST PLACES SECTION
+========================= */
+
+.places {
+  padding: 40px;
+  text-align: center;
+}
+
+.places h2 {
+  color: #103b2e;
+  margin-bottom: 30px;
+  font-size: 28px;
+}
+
+/* =========================
+   SEARCH BOX
+========================= */
+
+.search-box {
+  text-align: center;
+  margin: 25px auto;
+}
+
+.search-box input {
+  width: 60%;
+  max-width: 500px;
+
+  padding: 15px 20px;
+
+  border: 2px solid #0f5132;
+  border-radius: 30px;
+
+  font-size: 16px;
+
+  outline: none;
+
+  background-color: white;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+  transition: 0.3s;
+}
+
+.search-box input:focus {
+  border-color: #198754;
+
+  box-shadow: 0 0 10px rgba(25, 135, 84, 0.3);
+}
+
+.search-box input::placeholder {
+  color: #777;
+}
+
+/* =========================
+   TOURIST PLACES GRID
+========================= */
+
+.places-container {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 25px;
+
+  padding: 20px;
+
+  width: 100%;
+}
+
+/* =========================
+   TOURIST PLACE CARD
+========================= */
+
+.place-card {
+  background-color: white;
+
+  padding: 20px;
+
+  border-radius: 15px;
+
+  text-align: left;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  overflow: hidden;
+
+  min-width: 0;
+}
+
+.place-card:hover {
+  transform: translateY(-8px);
+
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* =========================
+   TOURIST PLACE IMAGES
+========================= */
+
+.place-image {
+  width: 100%;
+
+  height: 250px;
+
+  object-fit: cover;
+
+  display: block;
+
+  border-radius: 10px;
+
+  margin-bottom: 15px;
+}
+
+/* =========================
+   PLACE NAME
+========================= */
+
+.place-card h3 {
+  color: #147d50;
+
+  font-size: 24px;
+
+  margin-bottom: 15px;
+}
+
+/* =========================
+   PLACE DETAILS
+========================= */
+
+.place-card p {
+  margin-bottom: 10px;
+
+  line-height: 1.5;
+
+  font-size: 15px;
+}
+
+/* =========================
+   PLACE LINKS
+========================= */
+
+.place-card a {
+  display: inline-block;
+
+  margin-top: 15px;
+
+  background-color: #147d50;
+
+  color: white;
+
+  padding: 10px 20px;
+
+  text-decoration: none;
+
+  border-radius: 6px;
+
+  transition: 0.3s;
+}
+
+.place-card a:hover {
+  background-color: #103b2e;
+}
+
+/* =========================
+   BACK TO HOME BUTTON
+========================= */
+
+.places > a {
+  display: inline-block;
+
+  margin-top: 30px;
+
+  background-color: #147d50;
+
+  color: white;
+
+  padding: 12px 25px;
+
+  text-decoration: none;
+
+  border-radius: 6px;
+
+  transition: 0.3s;
+}
+
+.places > a:hover {
+  background-color: #103b2e;
+}
+
+/* =========================
+   DETAILS PAGE
+========================= */
+
+.details-container {
+  max-width: 1000px;
+
+  margin: 40px auto;
+
+  padding: 25px;
+
+  background-color: white;
+
+  border-radius: 15px;
+
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.details-container h1 {
+  color: #103b2e;
+
+  margin-bottom: 20px;
+}
+
+.details-container h2 {
+  color: #147d50;
+
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+
+.details-container p {
+  margin-bottom: 15px;
+}
+
+.details-container img {
+  width: 100%;
+
+  max-height: 400px;
+
+  object-fit: cover;
+
+  border-radius: 12px;
+
+  margin-bottom: 20px;
+}
+
+/* =========================
+   LOGIN / REGISTER
+========================= */
+
+.login-container,
+.register-container {
+  max-width: 450px;
+
+  margin: 60px auto;
+
+  padding: 35px;
+
+  background-color: white;
+
+  border-radius: 15px;
+
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+}
+
+.login-container h1,
+.register-container h1 {
+  text-align: center;
+
+  margin-bottom: 10px;
+
+  color: #103b2e;
+}
+
+.login-container p,
+.register-container p {
+  text-align: center;
+
+  margin-bottom: 25px;
+}
+
+.login-container label,
+.register-container label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  font-weight: bold;
+}
+
+.login-container input,
+.register-container input {
+  width: 100%;
+
+  padding: 12px;
+
+  margin-bottom: 18px;
+
+  border: 1px solid #ccc;
+
+  border-radius: 8px;
+
+  outline: none;
+}
+
+.login-container input:focus,
+.register-container input:focus {
+  border-color: #147d50;
+}
+
+.login-container button,
+.register-container button {
+  width: 100%;
+
+  padding: 13px;
+
+  background-color: #147d50;
+
+  color: white;
+
+  border: none;
+
+  border-radius: 8px;
+
+  font-size: 16px;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.login-container button:hover,
+.register-container button:hover {
+  background-color: #103b2e;
+}
+
+.login-container a,
+.register-container a {
+  color: #147d50;
+
+  text-decoration: none;
+
+  font-weight: bold;
+}
+
+/* =========================
+   FLASH MESSAGE
+========================= */
+
+.message {
+  padding: 10px;
+
+  margin-bottom: 15px;
+
+  background-color: #fff3cd;
+
+  color: #856404;
+
+  border-radius: 6px;
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+
+@media (max-width: 768px) {
+  .places-container {
+    grid-template-columns: 1fr;
+  }
+
+  .places {
+    padding: 20px;
+  }
+
+  .place-image {
+    height: 200px;
+  }
+
+  .search-box input {
+    width: 90%;
+  }
+
+  header h1 {
+    font-size: 26px;
+  }
+
+  .hero h2 {
+    font-size: 30px;
+  }
+
+  .hero {
+    min-height: 350px;
+  }
+
+  .details-container {
+    margin: 20px;
+    padding: 20px;
+  }
+}
+
+/* =========================
+   SMALL MOBILE SCREEN
+========================= */
+
+@media (max-width: 480px) {
+  header {
+    padding: 20px;
+  }
+
+  header h1 {
+    font-size: 24px;
+  }
+
+  .places h2 {
+    font-size: 20px;
+  }
+
+  .place-card {
+    padding: 15px;
+  }
+
+  .place-card h3 {
+    font-size: 20px;
+  }
+
+  .place-image {
+    height: 180px;
+  }
+
+  .search-box input {
+    width: 100%;
+
+    padding: 12px 15px;
+
+    font-size: 14px;
+  }
+
+  .hero h2 {
+    font-size: 26px;
+  }
+
+  .hero p {
+    font-size: 15px;
+  }
+
+  .login-container,
+  .register-container {
+    margin: 25px 15px;
+    padding: 25px;
+  }
+}
+/* =========================
+   HOME PAGE HERO
+========================= */
+
+.hero {
+  min-height: 400px;
+
+  background:
+    linear-gradient(rgba(0, 40, 30, 0.65), rgba(0, 40, 30, 0.65)),
+    url("/static/images/araku.jpg");
+
+  background-size: cover;
+
+  background-position: center;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+
+  text-align: center;
+
+  padding: 40px 20px;
+
+  color: white;
+}
+
+/* HERO HEADING */
+
+.hero h2 {
+  color: white;
+
+  font-size: 42px;
+
+  margin-bottom: 20px;
+}
+
+/* HERO PARAGRAPH */
+
+.hero p {
+  color: white;
+
+  font-size: 18px;
+
+  margin-bottom: 30px;
+}
+
+/* EXPLORE BUTTON */
+
+.hero button {
+  background-color: #147d50;
+
+  color: white;
+
+  padding: 14px 30px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  font-size: 16px;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+/* EXPLORE BUTTON HOVER */
+
+.hero button:hover {
+  background-color: #0d5c3a;
+
+  transform: translateY(-3px);
+}
+
+/* =========================
+   LOGIN REGISTER LINKS
+========================= */
+
+header nav {
+  margin-top: 20px;
+}
+
+/* LOGIN REGISTER BUTTONS */
+
+header nav a {
+  display: inline-block;
+
+  background-color: white;
+
+  color: #103b2e;
+
+  text-decoration: none;
+
+  padding: 10px 22px;
+
+  margin: 5px;
+
+  border-radius: 6px;
+
+  font-size: 15px;
+
+  font-weight: bold;
+
+  transition: 0.3s;
+}
+
+/* LOGIN REGISTER HOVER */
+
+header nav a:hover {
+  background-color: #198754;
+
+  color: white;
+
+  transform: translateY(-2px);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: 350px;
+  }
+
+  .hero h2 {
+    font-size: 28px;
+  }
+
+  .hero p {
+    font-size: 15px;
+  }
+}

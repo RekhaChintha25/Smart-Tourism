@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>My Favorites | Smart Tourism</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+
+    <style>
+      /* FAVORITES PAGE */
+
+      .favorites-section {
+        padding: 30px;
+
+        text-align: center;
+      }
+
+      .favorites-section h2 {
+        color: #103b2e;
+
+        font-size: 32px;
+
+        margin-bottom: 30px;
+      }
+
+      /* FAVORITES CONTAINER */
+
+      .favorites-container {
+        display: grid;
+
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+
+        gap: 25px;
+
+        max-width: 1200px;
+
+        margin: auto;
+      }
+
+      /* FAVORITE CARD */
+
+      .favorite-card {
+        background-color: white;
+
+        padding: 20px;
+
+        border-radius: 15px;
+
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+
+        transition: 0.3s;
+      }
+
+      .favorite-card:hover {
+        transform: translateY(-5px);
+      }
+
+      /* IMAGE */
+
+      .favorite-image {
+        width: 100%;
+
+        height: 220px;
+
+        object-fit: cover;
+
+        border-radius: 10px;
+
+        margin-bottom: 15px;
+      }
+
+      /* PLACE NAME */
+
+      .favorite-card h3 {
+        color: #103b2e;
+
+        font-size: 22px;
+
+        margin-bottom: 10px;
+      }
+
+      /* DETAILS BUTTON */
+
+      .details-button {
+        display: inline-block;
+
+        margin-top: 15px;
+
+        padding: 12px 22px;
+
+        background-color: #147d50;
+
+        color: white;
+
+        text-decoration: none;
+
+        border-radius: 25px;
+
+        font-weight: bold;
+
+        transition: 0.3s;
+      }
+
+      .details-button:hover {
+        background-color: #103b2e;
+
+        transform: translateY(-2px);
+      }
+
+      /* REMOVE FAVORITE */
+
+      .remove-button {
+        margin-top: 15px;
+
+        padding: 12px 22px;
+
+        background-color: #d62828;
+
+        color: white;
+
+        border: none;
+
+        border-radius: 25px;
+
+        font-size: 15px;
+
+        font-weight: bold;
+
+        cursor: pointer;
+
+        transition: 0.3s;
+      }
+
+      .remove-button:hover {
+        background-color: #a4161a;
+
+        transform: translateY(-2px);
+      }
+
+      /* EMPTY FAVORITES */
+
+      .empty-favorites {
+        text-align: center;
+
+        padding: 40px;
+
+        color: #555;
+
+        font-size: 20px;
+      }
+
+      /* BACK BUTTON */
+
+      .back-button {
+        display: inline-block;
+
+        margin-top: 30px;
+
+        padding: 12px 25px;
+
+        background-color: #103b2e;
+
+        color: white;
+
+        text-decoration: none;
+
+        border-radius: 25px;
+
+        font-weight: bold;
+
+        transition: 0.3s;
+      }
+
+      .back-button:hover {
+        background-color: #147d50;
+      }
+
+      /* RESPONSIVE */
+
+      @media (max-width: 768px) {
+        .favorites-section {
+          padding: 15px;
+        }
+
+        .favorites-section h2 {
+          font-size: 26px;
+        }
+
+        .favorite-image {
+          height: 200px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+
+    <header>
+      <h1>❤️ My Favorite Places</h1>
+
+      <p>Your saved tourist destinations</p>
+    </header>
+
+    <!-- FAVORITES SECTION -->
+
+    <section class="favorites-section">
+      <h2>My Favorite Destinations</h2>
+
+      <!-- CHECK FAVORITES -->
+
+      {% if favorite_places %}
+
+      <!-- FAVORITES CONTAINER -->
+
+      <div class="favorites-container">
+        {% for place in favorite_places %}
+
+        <!-- FAVORITE CARD -->
+
+        <div class="favorite-card">
+          <!-- IMAGE -->
+
+          <img
+            src="{{ url_for('static', filename='images/' + place.image) }}"
+            alt="{{ place.name }}"
+            class="favorite-image"
+          />
+
+          <!-- PLACE NAME -->
+
+          <h3>{{ place.name }}</h3>
+
+          <!-- LOCATION -->
+
+          <p>
+            <strong>Location:</strong>
+
+            {{ place.location }}
+          </p>
+
+          <!-- CATEGORY -->
+
+          <p>
+            <strong>Category:</strong>
+
+            {{ place.category }}
+          </p>
+
+          <!-- DESCRIPTION -->
+
+          <p>{{ place.description }}</p>
+
+          <!-- VIEW DETAILS -->
+
+          <a
+            href="{{ url_for('place_details', place_id=place.id) }}"
+            class="details-button"
+          >
+            View Details
+          </a>
+
+          <!-- REMOVE FAVORITE -->
+
+          <form
+            action="{{ url_for('remove_favorite', place_id=place.id) }}"
+            method="POST"
+          >
+            <button type="submit" class="remove-button">
+              ❌ Remove Favorite
+            </button>
+          </form>
+        </div>
+
+        {% endfor %}
+      </div>
+
+      {% else %}
+
+      <!-- EMPTY FAVORITES -->
+
+      <div class="empty-favorites">
+        <h3>No Favorite Places Yet ❤️</h3>
+
+        <p>You haven't added any tourist places to your favorites.</p>
+
+        <a href="{{ url_for('places') }}" class="details-button">
+          Explore Tourist Places
+        </a>
+      </div>
+
+      {% endif %}
+
+      <!-- BACK TO PLACES -->
+
+      <a href="{{ url_for('places') }}" class="back-button">
+        Back to Tourist Places
+      </a>
+
+      <br />
+
+      <!-- BACK HOME -->
+
+      <a href="{{ url_for('home') }}" class="back-button"> Back to Home </a>
+    </section>
+  </body>
+</html>
