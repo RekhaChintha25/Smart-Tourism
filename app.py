@@ -28,7 +28,7 @@ app.secret_key = "smart_tourism_secret_key"
 # MYSQL DATABASE CONNECTION
 # ==========================================
 
-def get_db_connection():
+():
     database_url = os.environ.get("DATABASE_URL")
 
     if not database_url:
@@ -222,7 +222,7 @@ def place_details(place_id):
         "place_details.html",
         place=selected_place
     )
-
+def get_db_connection
 
 # ==========================================
 # REGISTER PAGE
