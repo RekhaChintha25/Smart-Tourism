@@ -23,11 +23,21 @@
 
       <nav>
         {% if session.get('user_id') %}
+
         <span>Welcome, {{ session.get('username') }}!</span>
+
+        <a href="{{ url_for('places') }}">Tourist Places</a>
+
+        <a href="{{ url_for('favorites') }}">❤️ My Favorites</a>
+
         <a href="{{ url_for('logout') }}">Logout</a>
+
         {% else %}
+
         <a href="{{ url_for('login') }}">Login</a>
+
         <a href="{{ url_for('register') }}">Register</a>
+
         {% endif %}
       </nav>
     </header>

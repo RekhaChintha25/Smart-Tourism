@@ -674,6 +674,8 @@ def remove_favorite(place_id):
             connection.close()
 
 
+
+
 # ==========================================
 # RUN FLASK APPLICATION
 # ==========================================
