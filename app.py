@@ -1,5 +1,3 @@
-import os
-
 from flask import (
     Flask,
     render_template,
@@ -10,11 +8,7 @@ from flask import (
     flash
 )
 
-import psycopg2
-
-from psycopg2 import Error
-
-from psycopg2.extras import RealDictCursor
+import mysql.connector
 
 from werkzeug.security import (
     generate_password_hash,
@@ -22,84 +16,30 @@ from werkzeug.security import (
 )
 
 
-# ==========================================
-# FLASK APPLICATION
-# ==========================================
-
 app = Flask(__name__)
 
-app.secret_key = os.environ.get(
-    "SECRET_KEY",
-    "smart_tourism_secret_key"
-)
+app.secret_key = "smart_tourism_secret_key"
 
 
 # ==========================================
-# POSTGRESQL DATABASE CONNECTION
+# MYSQL DATABASE CONNECTION
 # ==========================================
 
 def get_db_connection():
 
-    database_url = os.environ.get("DATABASE_URL")
+    connection = mysql.connector.connect(
 
-    if not database_url:
-        raise RuntimeError("DATABASE_URL environment variable is not configured.")
+        host="localhost",
 
-    return psycopg2.connect(
-        database_url,
-        sslmode="require"
+        user="root",
+
+        password="rekha@2005",
+
+        database="smart_tourism_db"
+
     )
 
-
-def init_db():
-    """Create the required tables if they do not already exist."""
-    connection = None
-    cursor = None
-
-    try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
-
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                id SERIAL PRIMARY KEY,
-                username VARCHAR(100) NOT NULL,
-                email VARCHAR(255) UNIQUE NOT NULL,
-                password TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
-
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS favorites (
-                id SERIAL PRIMARY KEY,
-                user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-                place_id INTEGER NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                UNIQUE (user_id, place_id)
-            )
-        """)
-
-        connection.commit()
-        print("PostgreSQL tables are ready.")
-
-    except Error as error:
-        if connection is not None:
-            connection.rollback()
-        print("Database initialization error:", error)
-        raise
-
-    finally:
-        if cursor is not None:
-            cursor.close()
-        if connection is not None:
-            connection.close()
-
-
-try:
-    init_db()
-except Exception as startup_error:
-    print("Database startup check failed:", startup_error)
+    return connection
 
 
 # ==========================================
@@ -110,158 +50,131 @@ tourist_places = [
 
     {
         "id": 1,
-
         "name": "Araku Valley",
-
         "location": "Andhra Pradesh",
-
         "category": "Nature",
-
-        "description": (
-            "Beautiful hills, waterfalls "
-            "and coffee plantations."
-        ),
-
+        "description": "Beautiful hills, waterfalls and coffee plantations.",
         "image": "araku.jpg",
-
-        "about": (
-            "Araku Valley is a beautiful "
-            "hill destination known for its "
-            "green valleys, coffee plantations, "
-            "waterfalls and scenic mountain views."
-        ),
-
+        "about": "Araku Valley is a beautiful hill destination known for its green valleys, coffee plantations, waterfalls and scenic mountain views.",
         "best_time": "October to March",
-
         "attractions": [
-
             "Borra Caves",
-
             "Katiki Waterfalls",
-
             "Coffee Plantations",
-
             "Padmapuram Gardens"
-
         ],
-
-        "travel_info": (
-            "Araku Valley can be reached "
-            "by road from Visakhapatnam. "
-            "Train travel through the scenic "
-            "hills is also a popular option."
-        )
-
+        "travel_info": "Araku Valley can be reached by road from Visakhapatnam. Train travel through the scenic hills is also a popular option."
     },
 
     {
         "id": 2,
-
         "name": "Hampi",
-
         "location": "Karnataka",
-
         "category": "Historical",
-
-        "description": (
-            "Explore ancient temples and "
-            "beautiful historical monuments."
-        ),
-
+        "description": "Explore ancient temples and beautiful historical monuments.",
         "image": "hampi.jpg",
-
-        "about": (
-            "Hampi is a historical destination "
-            "famous for ancient temples, stone "
-            "monuments and the remains of "
-            "the Vijayanagara Empire."
-        ),
-
+        "about": "Hampi is a historical destination famous for ancient temples, stone monuments and the remains of the Vijayanagara Empire.",
         "best_time": "October to February",
-
         "attractions": [
-
             "Virupaksha Temple",
-
             "Stone Chariot",
-
             "Vijaya Vittala Temple",
-
             "Hampi Bazaar"
-
         ],
-
-        "travel_info": (
-            "Hampi can be reached by road "
-            "and rail through nearby towns "
-            "such as Hospet."
-        )
-
+        "travel_info": "Hampi can be reached by road and rail through nearby towns such as Hospet."
     },
 
     {
         "id": 3,
-
         "name": "Munnar",
-
         "location": "Kerala",
-
         "category": "Nature",
-
-        "description": (
-            "Enjoy green tea plantations "
-            "and beautiful mountain views."
-        ),
-
+        "description": "Enjoy green tea plantations and beautiful mountain views.",
         "image": "munnar.jpg",
-
-        "about": (
-            "Munnar is a popular hill station "
-            "known for tea plantations, misty "
-            "mountains, green landscapes "
-            "and pleasant weather."
-        ),
-
+        "about": "Munnar is a popular hill station known for tea plantations, misty mountains, green landscapes and pleasant weather.",
         "best_time": "September to March",
-
         "attractions": [
-
             "Eravikulam National Park",
-
             "Mattupetty Dam",
-
             "Tea Museum",
-
             "Echo Point"
-
         ],
+        "travel_info": "Munnar can be reached by road from Kochi and other nearby towns. The nearest major railway station is Aluva."
+    },
 
-        "travel_info": (
-            "Munnar can be reached by road "
-            "from Kochi and other nearby towns. "
-            "The nearest major railway station "
-            "is Aluva."
-        )
+    {
+        "id": 4,
+        "name": "Jaipur",
+        "location": "Rajasthan",
+        "category": "Historical",
+        "description": "Discover royal palaces, forts and colorful markets.",
+        "image": "jaipur.jpg",
+        "about": "Jaipur is known for its royal architecture, historic forts, colorful markets and traditional Rajasthani culture.",
+        "best_time": "October to March",
+        "attractions": [
+            "Hawa Mahal",
+            "Amber Fort",
+            "City Palace",
+            "Jantar Mantar"
+        ],
+        "travel_info": "Jaipur is accessible by air, rail and road. Jaipur International Airport connects the city with several destinations."
+    },
 
+    {
+        "id": 5,
+        "name": "Taj Mahal",
+        "location": "Agra, Uttar Pradesh",
+        "category": "Historical",
+        "description": "Explore the beautiful marble monument and its amazing architecture.",
+        "image": "tajmahal.jpg",
+        "about": "The Taj Mahal is a famous white marble monument in Agra, known for its beautiful architecture and historical significance.",
+        "best_time": "October to March",
+        "attractions": [
+            "Taj Mahal",
+            "Agra Fort",
+            "Mehtab Bagh",
+            "Fatehpur Sikri"
+        ],
+        "travel_info": "Agra can be reached by train, road and air through nearby airports. The Taj Mahal is located in Agra city."
+    },
+
+    {
+        "id": 6,
+        "name": "Ajanta Caves",
+        "location": "Maharashtra",
+        "category": "Historical",
+        "description": "Discover ancient Buddhist caves and beautiful paintings.",
+        "image": "ajanta.jpg",
+        "about": "Ajanta Caves are ancient Buddhist rock-cut caves famous for their sculptures, paintings and historical heritage.",
+        "best_time": "October to March",
+        "attractions": [
+            "Ajanta Cave 1",
+            "Ajanta Cave 2",
+            "Ancient Buddhist Paintings",
+            "Rock-cut Sculptures"
+        ],
+        "travel_info": "Ajanta Caves can be reached by road from nearby cities. Aurangabad is a common starting point for visitors."
+    },
+
+    {
+        "id": 7,
+        "name": "Varanasi",
+        "location": "Uttar Pradesh",
+        "category": "Spiritual",
+        "description": "Experience the sacred ghats and beautiful Ganga river views.",
+        "image": "varanasi.jpg",
+        "about": "Varanasi is a historic spiritual city known for its sacred riverfront, temples, traditional culture and Ganga Aarti.",
+        "best_time": "October to March",
+        "attractions": [
+            "Dashashwamedh Ghat",
+            "Kashi Vishwanath Temple",
+            "Assi Ghat",
+            "Sarnath"
+        ],
+        "travel_info": "Varanasi can be reached by air, rail and road. The city has an airport and major railway connections."
     }
 
 ]
-
-
-# ==========================================
-# HELPER FUNCTION
-# FIND TOURIST PLACE
-# ==========================================
-
-def get_place_by_id(place_id):
-
-    for place in tourist_places:
-
-        if place["id"] == place_id:
-
-            return place
-
-    return None
 
 
 # ==========================================
@@ -269,16 +182,48 @@ def get_place_by_id(place_id):
 # ==========================================
 
 @app.route("/")
-@app.route("/home")
-
 def home():
 
+    return render_template("index.html")
+
+
+# ==========================================
+# TOURIST PLACES PAGE
+# ==========================================
+
+@app.route("/places")
+def places():
+
     return render_template(
-
-        "index.html",
-
+        "places.html",
         tourist_places=tourist_places
+    )
 
+
+# ==========================================
+# TOURIST PLACE DETAILS
+# ==========================================
+
+@app.route("/place/<int:place_id>")
+def place_details(place_id):
+
+    selected_place = None
+
+    for place in tourist_places:
+
+        if place["id"] == place_id:
+
+            selected_place = place
+
+            break
+
+    if selected_place is None:
+
+        return "Tourist place not found", 404
+
+    return render_template(
+        "place_details.html",
+        place=selected_place
     )
 
 
@@ -286,51 +231,39 @@ def home():
 # REGISTER PAGE
 # ==========================================
 
-@app.route(
-    "/register",
-    methods=["GET", "POST"]
-)
-
+@app.route("/register", methods=["GET", "POST"])
 def register():
 
     if request.method == "POST":
 
-        username = request.form.get(
-            "username",
-            ""
-        ).strip()
+        username = request.form.get("username", "").strip()
 
-        email = request.form.get(
-            "email",
-            ""
-        ).strip().lower()
+        email = request.form.get("email", "").strip()
 
-        password = request.form.get(
-            "password",
+        password = request.form.get("password", "")
+
+        confirm_password = request.form.get(
+            "confirm_password",
             ""
         )
 
-        # VALIDATION
-
         if not username or not email or not password:
 
-            flash(
-                "Please fill all required fields."
-            )
+            flash("Please fill all required fields.")
 
-            return redirect(
-                url_for("register")
-            )
+            return redirect(url_for("register"))
 
-        if len(password) < 6:
+        if len(password) < 8:
 
-            flash(
-                "Password must contain at least 6 characters."
-            )
+            flash("Password must contain at least 8 characters.")
 
-            return redirect(
-                url_for("register")
-            )
+            return redirect(url_for("register"))
+
+        if password != confirm_password:
+
+            flash("Passwords do not match.")
+
+            return redirect(url_for("register"))
 
         connection = None
 
@@ -342,55 +275,27 @@ def register():
 
             cursor = connection.cursor()
 
-            # CHECK EXISTING EMAIL
-
             cursor.execute(
-
-                """
-                SELECT id
-                FROM users
-                WHERE email = %s
-                """,
-
+                "SELECT id FROM users WHERE email = %s",
                 (email,)
-
             )
 
             existing_user = cursor.fetchone()
 
             if existing_user:
 
-                flash(
-                    "Email already registered."
-                )
+                flash("Email already registered.")
 
-                return redirect(
-                    url_for("register")
-                )
+                return redirect(url_for("register"))
 
-            # HASH PASSWORD
-
-            hashed_password = generate_password_hash(
-                password
-            )
-
-            # INSERT USER
+            hashed_password = generate_password_hash(password)
 
             cursor.execute(
 
                 """
                 INSERT INTO users
-                (
-                    username,
-                    email,
-                    password
-                )
-                VALUES
-                (
-                    %s,
-                    %s,
-                    %s
-                )
+                (username, email, password)
+                VALUES (%s, %s, %s)
                 """,
 
                 (
@@ -403,32 +308,17 @@ def register():
 
             connection.commit()
 
-            flash(
-                "Registration successful. Please login."
-            )
+            flash("Registration successful. Please login.")
 
-            return redirect(
-                url_for("login")
-            )
+            return redirect(url_for("login"))
 
-        except Error as error:
+        except mysql.connector.Error as error:
 
-            if connection is not None:
+            print("Database Error:", error)
 
-                connection.rollback()
+            flash("Database error. Please try again.")
 
-            print(
-                "Database Error:",
-                error
-            )
-
-            flash(
-                "Unable to register. Please try again."
-            )
-
-            return redirect(
-                url_for("register")
-            )
+            return redirect(url_for("register"))
 
         finally:
 
@@ -440,43 +330,27 @@ def register():
 
                 connection.close()
 
-    return render_template(
-        "register.html"
-    )
+    return render_template("register.html")
 
 
 # ==========================================
 # LOGIN PAGE
 # ==========================================
 
-@app.route(
-    "/login",
-    methods=["GET", "POST"]
-)
-
+@app.route("/login", methods=["GET", "POST"])
 def login():
 
     if request.method == "POST":
 
-        email = request.form.get(
-            "email",
-            ""
-        ).strip().lower()
+        email = request.form.get("email", "").strip()
 
-        password = request.form.get(
-            "password",
-            ""
-        )
+        password = request.form.get("password", "")
 
         if not email or not password:
 
-            flash(
-                "Please enter email and password."
-            )
+            flash("Please enter email and password.")
 
-            return redirect(
-                url_for("login")
-            )
+            return redirect(url_for("login"))
 
         connection = None
 
@@ -486,20 +360,12 @@ def login():
 
             connection = get_db_connection()
 
-            cursor = connection.cursor(
-                cursor_factory=RealDictCursor
-            )
-
-            # GET USER
+            cursor = connection.cursor(dictionary=True)
 
             cursor.execute(
 
                 """
-                SELECT
-                    id,
-                    username,
-                    email,
-                    password
+                SELECT id, username, email, password
                 FROM users
                 WHERE email = %s
                 """,
@@ -510,14 +376,9 @@ def login():
 
             user = cursor.fetchone()
 
-            # CHECK PASSWORD
-
             if user and check_password_hash(
-
                 user["password"],
-
                 password
-
             ):
 
                 session.clear()
@@ -526,38 +387,23 @@ def login():
 
                 session["username"] = user["username"]
 
-                flash(
-                    "Login successful."
-                )
+                flash("Login successful.")
 
-                return redirect(
-                    url_for("home")
-                )
+                return redirect(url_for("home"))
 
             else:
 
-                flash(
-                    "Invalid email or password."
-                )
+                flash("Invalid email or password.")
 
-                return redirect(
-                    url_for("login")
-                )
+                return redirect(url_for("login"))
 
-        except Error as error:
+        except mysql.connector.Error as error:
 
-            print(
-                "Database Error:",
-                error
-            )
+            print("Database Error:", error)
 
-            flash(
-                "Database error. Please try again."
-            )
+            flash("Database error. Please try again.")
 
-            return redirect(
-                url_for("login")
-            )
+            return redirect(url_for("login"))
 
         finally:
 
@@ -569,147 +415,46 @@ def login():
 
                 connection.close()
 
-    return render_template(
-        "login.html"
-    )
+    return render_template("login.html")
 
 
 # ==========================================
-# TOURIST PLACES PAGE
+# LOGOUT
 # ==========================================
 
-@app.route("/places")
+@app.route("/logout")
+def logout():
 
-def places():
+    session.clear()
 
-    search = request.args.get(
-        "search",
-        ""
-    ).strip().lower()
+    flash("You have logged out.")
 
-    category = request.args.get(
-        "category",
-        ""
-    ).strip()
-
-    filtered_places = tourist_places
-
-    # SEARCH FILTER
-
-    if search:
-
-        filtered_places = [
-
-            place
-
-            for place in filtered_places
-
-            if search in place["name"].lower()
-
-            or search in place["location"].lower()
-
-            or search in place["category"].lower()
-
-        ]
-
-    # CATEGORY FILTER
-
-    if category:
-
-        filtered_places = [
-
-            place
-
-            for place in filtered_places
-
-            if place["category"] == category
-
-        ]
-
-    return render_template(
-
-        "places.html",
-
-        tourist_places=filtered_places,
-
-        search=search,
-
-        category=category
-
-    )
-
-
-# ==========================================
-# PLACE DETAILS PAGE
-# ==========================================
-
-@app.route(
-    "/place/<int:place_id>"
-)
-
-def place_details(place_id):
-
-    place = get_place_by_id(
-        place_id
-    )
-
-    if place is None:
-
-        flash(
-            "Tourist place not found."
-        )
-
-        return redirect(
-            url_for("places")
-        )
-
-    return render_template(
-
-        "place_details.html",
-
-        place=place
-
-    )
+    return redirect(url_for("home"))
 
 
 # ==========================================
 # ADD FAVORITE
 # ==========================================
 
-@app.route(
-    "/add_favorite/<int:place_id>",
-    methods=["POST"]
-)
-
+@app.route("/add_favorite/<int:place_id>", methods=["POST"])
 def add_favorite(place_id):
-
-    # LOGIN CHECK
 
     if "user_id" not in session:
 
-        flash(
-            "Please login first."
-        )
+        flash("Please login to add favorites.")
 
-        return redirect(
-            url_for("login")
-        )
+        return redirect(url_for("login"))
 
-    # PLACE CHECK
-
-    place = get_place_by_id(
-        place_id
+    place_exists = any(
+        place["id"] == place_id
+        for place in tourist_places
     )
 
-    if place is None:
+    if not place_exists:
 
-        flash(
-            "Tourist place not found."
-        )
+        flash("Tourist place not found.")
 
-        return redirect(
-            url_for("places")
-        )
+        return redirect(url_for("places"))
 
     connection = None
 
@@ -721,23 +466,17 @@ def add_favorite(place_id):
 
         cursor = connection.cursor()
 
-        # CHECK EXISTING FAVORITE
-
         cursor.execute(
 
             """
             SELECT id
             FROM favorites
-            WHERE user_id = %s
-            AND place_id = %s
+            WHERE user_id = %s AND place_id = %s
             """,
 
             (
-
                 session["user_id"],
-
                 place_id
-
             )
 
         )
@@ -746,69 +485,38 @@ def add_favorite(place_id):
 
         if existing_favorite:
 
-            flash(
-                "This place is already in favorites."
-            )
+            flash("This place is already in your favorites.")
 
-            return redirect(
-                url_for("favorites")
-            )
-
-        # INSERT FAVORITE
+            return redirect(url_for("places"))
 
         cursor.execute(
 
             """
             INSERT INTO favorites
-            (
-                user_id,
-                place_id
-            )
-            VALUES
-            (
-                %s,
-                %s
-            )
+            (user_id, place_id)
+            VALUES (%s, %s)
             """,
 
             (
-
                 session["user_id"],
-
                 place_id
-
             )
 
         )
 
         connection.commit()
 
-        flash(
-            "Place added to favorites."
-        )
+        flash("Place added to favorites successfully.")
 
-        return redirect(
-            url_for("favorites")
-        )
+        return redirect(url_for("places"))
 
-    except Error as error:
+    except mysql.connector.Error as error:
 
-        if connection is not None:
+        print("Database Error:", error)
 
-            connection.rollback()
+        flash("Unable to add favorite. Please try again.")
 
-        print(
-            "Database Error:",
-            error
-        )
-
-        flash(
-            "Unable to add favorite."
-        )
-
-        return redirect(
-            url_for("places")
-        )
+        return redirect(url_for("places"))
 
     finally:
 
@@ -822,24 +530,17 @@ def add_favorite(place_id):
 
 
 # ==========================================
-# FAVORITES PAGE
+# MY FAVORITES PAGE
 # ==========================================
 
 @app.route("/favorites")
-
 def favorites():
-
-    # LOGIN CHECK
 
     if "user_id" not in session:
 
-        flash(
-            "Please login first."
-        )
+        flash("Please login to view your favorites.")
 
-        return redirect(
-            url_for("login")
-        )
+        return redirect(url_for("login"))
 
     connection = None
 
@@ -851,8 +552,6 @@ def favorites():
 
         cursor = connection.cursor()
 
-        # GET FAVORITE PLACE IDS
-
         cursor.execute(
 
             """
@@ -861,25 +560,16 @@ def favorites():
             WHERE user_id = %s
             """,
 
-            (
-
-                session["user_id"],
-
-            )
+            (session["user_id"],)
 
         )
 
         favorite_rows = cursor.fetchall()
 
         favorite_ids = [
-
             row[0]
-
             for row in favorite_rows
-
         ]
-
-        # GET FAVORITE PLACES
 
         favorite_places = [
 
@@ -892,27 +582,17 @@ def favorites():
         ]
 
         return render_template(
-
             "favorites.html",
-
             favorite_places=favorite_places
-
         )
 
-    except Error as error:
+    except mysql.connector.Error as error:
 
-        print(
-            "Database Error:",
-            error
-        )
+        print("Database Error:", error)
 
-        flash(
-            "Unable to load favorites."
-        )
+        flash("Unable to load favorites.")
 
-        return redirect(
-            url_for("places")
-        )
+        return redirect(url_for("places"))
 
     finally:
 
@@ -929,24 +609,14 @@ def favorites():
 # REMOVE FAVORITE
 # ==========================================
 
-@app.route(
-    "/remove_favorite/<int:place_id>",
-    methods=["POST"]
-)
-
+@app.route("/remove_favorite/<int:place_id>", methods=["POST"])
 def remove_favorite(place_id):
-
-    # LOGIN CHECK
 
     if "user_id" not in session:
 
-        flash(
-            "Please login first."
-        )
+        flash("Please login first.")
 
-        return redirect(
-            url_for("login")
-        )
+        return redirect(url_for("login"))
 
     connection = None
 
@@ -958,8 +628,6 @@ def remove_favorite(place_id):
 
         cursor = connection.cursor()
 
-        # DELETE FAVORITE
-
         cursor.execute(
 
             """
@@ -969,11 +637,8 @@ def remove_favorite(place_id):
             """,
 
             (
-
                 session["user_id"],
-
                 place_id
-
             )
 
         )
@@ -982,38 +647,21 @@ def remove_favorite(place_id):
 
         if cursor.rowcount > 0:
 
-            flash(
-                "Favorite removed successfully."
-            )
+            flash("Favorite removed successfully.")
 
         else:
 
-            flash(
-                "Favorite not found."
-            )
+            flash("Favorite not found.")
 
-        return redirect(
-            url_for("favorites")
-        )
+        return redirect(url_for("favorites"))
 
-    except Error as error:
+    except mysql.connector.Error as error:
 
-        if connection is not None:
+        print("Database Error:", error)
 
-            connection.rollback()
+        flash("Unable to remove favorite.")
 
-        print(
-            "Database Error:",
-            error
-        )
-
-        flash(
-            "Unable to remove favorite."
-        )
-
-        return redirect(
-            url_for("favorites")
-        )
+        return redirect(url_for("favorites"))
 
     finally:
 
@@ -1027,34 +675,9 @@ def remove_favorite(place_id):
 
 
 # ==========================================
-# LOGOUT
-# ==========================================
-
-@app.route("/logout")
-
-def logout():
-
-    session.clear()
-
-    flash(
-        "You have been logged out."
-    )
-
-    return redirect(
-        url_for("login")
-    )
-
-
-# ==========================================
 # RUN FLASK APPLICATION
 # ==========================================
 
 if __name__ == "__main__":
 
-    port = int(os.environ.get("PORT", 5000))
-
-    app.run(
-        host="0.0.0.0",
-        port=port,
-        debug=False
-    )
+    app.run(debug=True)
